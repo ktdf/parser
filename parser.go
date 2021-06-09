@@ -11,3 +11,8 @@ func ParseLinks(r io.Reader) (l []Link) {
 	fmt.Println(node)
 	return nil
 }
+
+type Link struct {
+	Href string
+	Text string
+}
