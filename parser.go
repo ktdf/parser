@@ -9,9 +9,7 @@ import (
 var links map[address]*Link
 
 func ParseLinks(r io.Reader) (l map[address]*Link) {
-	//links = make(map[address]*Link)
 	var alreadySeen []address
-	//l = &links
 	l = make(map[address]*Link)
 	node, err := html.Parse(r)
 	if err != nil {
@@ -24,20 +22,11 @@ func ParseLinks(r io.Reader) (l map[address]*Link) {
 func crawl(n *html.Node, l map[address]*Link, a *[]address) {
 	checkForATypes(n, l)
 	if n.NextSibling != nil {
-//		if addressIsNotChecked(n.NextSibling, a) {
-			crawl(n.NextSibling, l, a)
-//		}
+		crawl(n.NextSibling, l, a)
 	}
 	if n.FirstChild != nil {
 		crawl(n.FirstChild, l, a)
 	}
-	//if n.PrevSibling != nil {
-//		*a = append(*a, n)
-	//	crawl(n.PrevSibling, l, a)
-	//}
-	//if n.Parent != nil {
-	//	crawl(n.Parent, l, a)
-	//}
 }
 
 func checkForATypes(n *html.Node, l map[address]*Link) {
