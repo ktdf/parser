@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"golang.org/x/net/html"
 	"io"
+	"strings"
 )
 
 var links []*Link
@@ -34,31 +35,25 @@ func checkForATypes(n *html.Node, l *[]*Link) {
 			if index.Key == "href" {
 				var link Link
 				link.Href = index.Val
-				link.Text = *aCrawler(n.FirstChild, &link.Text)
+				link.Text = aCrawler(n.FirstChild)
 				*l = append(*l, &link)
 			}
 		}
 	}
 }
 
-func aCrawler(n *html.Node, text *string)  *string {
+func aCrawler(n *html.Node) string {
 	var tmpText string
 	if n.Type == html.TextNode {
-		*text = *text + " " + n.Data
+		tmpText += n.Data + " " 
 	}
 	if n.NextSibling != nil {
-		tmpText = *aCrawler(n.NextSibling, &tmpText)
-		if tmpText != "" {
-			*text = *text + " " + tmpText
-		}
+		tmpText = aCrawler(n.NextSibling) + " "
 	}
 	if n.FirstChild != nil {
-		tmpText = *aCrawler(n.FirstChild, &tmpText)
-		if tmpText != "" {
-			 *text = *text + " " + tmpText
-		}
+		tmpText = aCrawler(n.FirstChild) + " "
 	}
-	return text
+	return strings.Join(strings.Fields(tmpText), " ")
 }
 
 type address *html.Node
