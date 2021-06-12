@@ -9,23 +9,22 @@ import (
 var links map[address]*Link
 
 func ParseLinks(r io.Reader) (l map[address]*Link) {
-	var alreadySeen []address
 	l = make(map[address]*Link)
 	node, err := html.Parse(r)
 	if err != nil {
 		fmt.Println(err)
 	}
-	crawl(node, l, &alreadySeen)
+	crawl(node, l)
 	return l
 }
 
-func crawl(n *html.Node, l map[address]*Link, a *[]address) {
+func crawl(n *html.Node, l map[address]*Link) {
 	checkForATypes(n, l)
 	if n.NextSibling != nil {
-		crawl(n.NextSibling, l, a)
+		crawl(n.NextSibling, l)
 	}
 	if n.FirstChild != nil {
-		crawl(n.FirstChild, l, a)
+		crawl(n.FirstChild, l	)
 	}
 }
 
@@ -54,13 +53,4 @@ type address *html.Node
 type Link struct {
 	Href string
 	Text string
-}
-
-func addressIsNotChecked(n *html.Node, a *[]address) bool {
-	for _, addr := range *a {
-		if n == addr {
-			return false
-		}
-	}
-	return true
 }
