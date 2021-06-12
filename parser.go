@@ -48,10 +48,10 @@ func aCrawler(n *html.Node) string {
 		tmpText += n.Data + " " 
 	}
 	if n.NextSibling != nil {
-		tmpText = aCrawler(n.NextSibling) + " "
+		tmpText += aCrawler(n.NextSibling) + " "
 	}
 	if n.FirstChild != nil {
-		tmpText = aCrawler(n.FirstChild) + " "
+		tmpText += aCrawler(n.FirstChild) + " "
 	}
 	return strings.Join(strings.Fields(tmpText), " ")
 }
