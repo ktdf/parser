@@ -6,13 +6,72 @@ import (
 	"io"
 )
 
-func ParseLinks(r io.Reader) (l []Link) {
-	node, _ := html.Parse(r)
-	fmt.Println(node)
-	return nil
+var links map[address]*Link
+
+func ParseLinks(r io.Reader) (l map[address]*Link) {
+	//links = make(map[address]*Link)
+	var alreadySeen []address
+	//l = &links
+	l = make(map[address]*Link)
+	node, err := html.Parse(r)
+	if err != nil {
+		fmt.Println(err)
+	}
+	crawl(node, l, &alreadySeen)
+	return l
 }
+
+func crawl(n *html.Node, l map[address]*Link, a *[]address) {
+	checkForATypes(n, l)
+	if n.NextSibling != nil {
+//		if addressIsNotChecked(n.NextSibling, a) {
+			crawl(n.NextSibling, l, a)
+//		}
+	}
+	if n.FirstChild != nil {
+		crawl(n.FirstChild, l, a)
+	}
+	//if n.PrevSibling != nil {
+//		*a = append(*a, n)
+	//	crawl(n.PrevSibling, l, a)
+	//}
+	//if n.Parent != nil {
+	//	crawl(n.Parent, l, a)
+	//}
+}
+
+func checkForATypes(n *html.Node, l map[address]*Link) {
+	if n.DataAtom == 1 {
+		for _, index := range n.Attr {
+			if index.Key == "href" {
+				var link Link
+				link.Href = index.Val
+				link.Text = aCrawler(n.FirstChild)
+				l[n] = &link
+			}
+		}
+	}
+}
+
+func aCrawler(n *html.Node) (text string) {
+	if n.Type == html.TextNode {
+		text = n.Data
+	}
+	return
+}
+
+type address *html.Node
 
 type Link struct {
 	Href string
 	Text string
+}
+
+func addressIsNotChecked(n *html.Node, a *[]address) bool {
+	for _, addr := range *a {
+		if n == addr {
+			return false
+		}
+	}
+	return true
 }
